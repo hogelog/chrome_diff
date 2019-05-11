@@ -1,4 +1,5 @@
 require "selenium_diff/version"
+require "selenium_diff/cli"
 
 require "selenium-webdriver"
 require "fileutils"
@@ -27,6 +28,7 @@ class SeleniumDiff
   end
 
   def run(from_url:, to_url:, output:)
+    compare_status = nil
     Dir.mktmpdir do |tmpdir|
       from_file = File.join(tmpdir, "from.png")
       to_file = File.join(tmpdir, "to.png")
@@ -36,8 +38,10 @@ class SeleniumDiff
       @driver.save_screenshot(from_file)
       @driver.navigate.to(to_url)
       @driver.save_screenshot(to_file)
-      system("compare", from_file, to_file, diff_file)
+      compare_status = system("compare", from_file, to_file, diff_file)
       File.rename(diff_file, output)
     end
+
+    compare_status
   end
 end

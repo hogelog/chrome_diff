@@ -1,12 +1,11 @@
 RSpec.describe SeleniumDiff do
-  let(:from_url) { "https://www.google.com/?q=hello" }
-  let(:to_url) { "https://www.google.com/?q=world" }
   let(:output) { File.join(tmp_path, "tmp.png") }
 
   describe "#run" do
     it "generates visual diff" do
       diff = SeleniumDiff.new
-      diff.run(from_url: from_url, to_url: to_url, output: output)
+      expect(diff.run(from_url: "https://www.google.com/?q=hello", to_url: "https://www.google.com/?q=world", output: output)).to eq(false)
+      expect(diff.run(from_url: "https://www.google.com/?q=hello", to_url: "https://www.google.com/?q=hello", output: output)).to eq(true)
     end
   end
 end
