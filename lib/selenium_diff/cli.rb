@@ -1,6 +1,6 @@
 require "optparse"
 
-class SeleniumDiff
+module SeleniumDiff
   class CLI
     def self.run(argv)
       opts = parse_argv(argv.dup)
@@ -9,14 +9,13 @@ class SeleniumDiff
       to = opts[:to_url]
       output = opts[:output]
 
-      status = SeleniumDiff.new.run(from_url: from, to_url: to, output: output)
+      status = SeleniumDiff.run(from_url: from, to_url: to, output: output)
 
       unless opts[:quiet]
-        puts "Visual diff generated: #{output}"
         if status
-          puts "No differences found: #{from} -> #{to}"
+          puts "No differences found: #{from} -> #{to} (#{output})"
         else
-          puts "There are some differences: #{from} -> #{to}"
+          puts "There are some differences: #{from} -> #{to} (#{output})"
         end
       end
     end
