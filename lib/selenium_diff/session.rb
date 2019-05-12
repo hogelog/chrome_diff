@@ -9,7 +9,7 @@ module SeleniumDiff
           "--headless",
           "--disable-gpu",
           "--disable-translate",
-          "--window-size=400,4000",
+          "--window-size=800,600",
           "--noerrdialogs"
       ])
       @driver = Selenium::WebDriver::Chrome::Driver.new(options: driver_options)
@@ -22,15 +22,23 @@ module SeleniumDiff
         to_file = File.join(tmpdir, "to.png")
         diff_file = File.join(tmpdir, "diff.png")
 
-        @driver.navigate.to(from_url)
-        @driver.save_screenshot(from_file)
-        @driver.navigate.to(to_url)
-        @driver.save_screenshot(to_file)
+        width, height = screenshot(from_url, from_file)
+        screenshot(to_url, to_file, width: width, height: height)
+
         compare_status = system("compare", from_file, to_file, diff_file)
         File.rename(diff_file, output)
       end
 
       compare_status
+    end
+
+    def screenshot(url, file, width: nil, height: nil)
+        @driver.navigate.to(url)
+        width ||= @driver.execute_script('return document.documentElement.scrollWidth')
+        height ||= @driver.execute_script('return document.documentElement.scrollHeight')
+        @driver.manage.window.resize_to(width, height)
+        @driver.save_screenshot(file)
+        [width, height]
     end
   end
 end
