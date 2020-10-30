@@ -12,7 +12,7 @@ module SeleniumDiff
       status = SeleniumDiff.run(from_url: from, to_url: to, output: output)
 
       unless opts[:quiet]
-        if status
+        if status.success?
           puts "No differences found: #{from} -> #{to} (#{output})"
         else
           puts "There are some differences: #{from} -> #{to} (#{output})"

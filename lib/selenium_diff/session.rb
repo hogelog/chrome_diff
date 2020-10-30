@@ -1,44 +1,71 @@
 require "selenium-webdriver"
 require "fileutils"
 require "tmpdir"
+require "open3"
 
 module SeleniumDiff
+  class CompareStatus
+    attr_reader :status, :difference, :difference_percent
+
+    def initialize(status, stderr, width, height)
+      @status = status
+
+      @difference = stderr.to_i
+      @difference_percent = @difference.to_f / width / height * 100
+    end
+
+    def success?
+      @status == 0
+    end
+  end
+
   class Session
-    def initialize
+    def initialize(width: 800, height: 600)
+      @width = width
+      @height = height
       driver_options = Selenium::WebDriver::Chrome::Options.new(args: [
-          "--headless",
-          "--disable-gpu",
-          "--disable-translate",
-          "--window-size=800,600",
-          "--noerrdialogs"
+        "--headless",
+        "--disable-gpu",
+        "--disable-translate",
+        "--window-size=#{width},#{height}",
+        "--noerrdialogs",
+        "--hide-scrollbars",
+        "--hide-scrollbars",
+        "device-scale-factor=1",
+        "force-device-scale-factor",
       ])
       @driver = Selenium::WebDriver::Chrome::Driver.new(options: driver_options)
     end
 
     def run(from_url:, to_url:, output:)
-      compare_status = nil
+      result = nil
       Dir.mktmpdir do |tmpdir|
         from_file = File.join(tmpdir, "from.png")
         to_file = File.join(tmpdir, "to.png")
         diff_file = File.join(tmpdir, "diff.png")
 
-        width, height = screenshot(from_url, from_file)
-        screenshot(to_url, to_file, width: width, height: height)
+        screenshot(from_url, from_file)
+        screenshot(to_url, to_file)
 
-        compare_status = system("compare", from_file, to_file, diff_file)
+        _stdout, stderr, status =  Open3.capture3("compare", "-metric", "AE", from_file, to_file, diff_file)
+        result = CompareStatus.new(status, stderr, @width, @height)
         File.rename(diff_file, output)
       end
 
-      compare_status
+      result
     end
 
-    def screenshot(url, file, width: nil, height: nil)
+    def screenshot(url, file)
         @driver.navigate.to(url)
-        width ||= @driver.execute_script('return document.documentElement.scrollWidth')
-        height ||= @driver.execute_script('return document.documentElement.scrollHeight')
-        @driver.manage.window.resize_to(width, height)
+        wait_complete
+        @driver.manage.window.resize_to(@width, @height)
         @driver.save_screenshot(file)
-        [width, height]
+    end
+
+    def wait_complete
+      Selenium::WebDriver::Wait.new.until do
+        @driver.execute_script('return document.readyState') == "complete"
+      end
     end
   end
 end
