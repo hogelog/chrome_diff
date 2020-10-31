@@ -13,7 +13,7 @@ module ChromeDiff
       @status = status
       @fuzz = fuzz
 
-      @diff = stderr.to_i
+      @diff = stderr.to_f.to_i
       @diff_percent = @diff.to_f / width / height * 100
     end
 
