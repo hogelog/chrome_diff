@@ -21,7 +21,7 @@ module ChromeDiff
 
     begin
       session = ChromeDiff::Session.new(width: width, height: height, timeout: timeout, debug: debug)
-      session.run(**args)
+      session.compare(**args)
     ensure
       session.browser&.quit
     end

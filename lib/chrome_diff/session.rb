@@ -47,7 +47,7 @@ module ChromeDiff
       @browser.resize(width: @width, height: @height)
     end
 
-    def run(from_url:, to_url:, output:, fuzz: nil)
+    def compare(from_url:, to_url:, output:, fuzz: nil)
       fuzz ||= ChromeDiff::DEFAULT_OPTIONS[:fuzz]
       result = nil
       Dir.mktmpdir do |tmpdir|
@@ -61,14 +61,13 @@ module ChromeDiff
         _stdout, stderr, status =  Open3.capture3("compare", "-metric", "AE", from_file, to_file, diff_file)
         result = CompareStatus.new(status, stderr, @width, @height, fuzz)
 
-        File.rename(diff_file, output)
+        File.rename(diff_file, output) if output
       end
 
       result
     end
 
     def screenshot(url, file)
-      @browser.network.wait_for_idle
       @browser.goto(url)
       wait_complete
       @browser.resize(width: @width, height: @height)

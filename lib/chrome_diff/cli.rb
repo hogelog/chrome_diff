@@ -9,10 +9,12 @@ module ChromeDiff
 
       unless opts[:quiet]
         if result.success?
-          puts "There is no difference (%.2f%%): #{output}" % result.diff_percent
+          message = "There is no difference (%.2f%%)" % result.diff_percent
         else
-          puts "There are some diffefences (%.2f%%): #{output}" % result.diff_percent
+          message = "There are some diffefences (%.2f%%)" % result.diff_percent
         end
+        message += ": #{output}" if output
+        puts message
       end
 
       result
@@ -29,6 +31,7 @@ module ChromeDiff
       parser.on("-q", "--quiet", "Quiet mode") {|v| opts[:quiet] = v }
       parser.on("--fuzz [FUZZ]", "Fuzz factor percent (default 5%)") {|v| opts[:fuzz] = v.to_f }
       parser.on("--debug", "Debug mode (default false)") {|v| opts[:debug] = !!v }
+      parser.on("--no-output", "Don't output diff file") {|v| opts[:output] = v }
       parser.parse(argv)
 
       required(opts, :from_url)
