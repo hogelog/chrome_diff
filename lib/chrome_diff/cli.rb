@@ -32,6 +32,7 @@ module ChromeDiff
       parser.on("--fuzz [FUZZ]", "Fuzz factor percent (default 5%)") {|v| opts[:fuzz] = v.to_f }
       parser.on("--debug", "Debug mode (default false)") {|v| opts[:debug] = !!v }
       parser.on("--no-output", "Don't output diff file") {|v| opts[:output] = v }
+      parser.on("--full-screenshot", "Capture full screenshot") {|v| opts[:full_screenshot] = !!v }
       parser.parse(argv)
 
       required(opts, :from_url)
