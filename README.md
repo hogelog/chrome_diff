@@ -15,7 +15,7 @@ $ gem install chrome_diff
 ## Usage
 
 ```console
-$ chrome_diff -f "https://google.com/?q=hello" -t "https://google.com/?q=world"
+$ chrome-diff -f "https://google.com/?q=hello" -t "https://google.com/?q=world"
 There are some diffefences (1.44%): diff.png
 ```
 
