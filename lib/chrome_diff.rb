@@ -1,6 +1,7 @@
 require "chrome_diff/version"
 require "chrome_diff/cli"
 require "chrome_diff/session"
+require "chrome_diff/site_checker"
 
 module ChromeDiff
   class Error < StandardError; end
