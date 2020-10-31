@@ -1,7 +1,9 @@
-require "selenium-webdriver"
+require "ferrum"
+
 require "fileutils"
 require "tmpdir"
 require "open3"
+require "logger"
 
 module SeleniumDiff
   class CompareStatus
@@ -21,24 +23,32 @@ module SeleniumDiff
   end
 
   class Session
-    def initialize(width: SeleniumDiff::DEFAULT_OPTIONS[:width], height: SeleniumDiff::DEFAULT_OPTIONS[:height])
-      @width = width
-      @height = height
-      driver_options = Selenium::WebDriver::Chrome::Options.new(args: [
-        "--headless",
-        "--disable-gpu",
-        "--disable-translate",
-        "--window-size=#{width},#{height}",
-        "--noerrdialogs",
-        "--hide-scrollbars",
-        "--hide-scrollbars",
-        "device-scale-factor=1",
-        "force-device-scale-factor",
-      ])
-      @driver = Selenium::WebDriver::Chrome::Driver.new(options: driver_options)
+    attr_reader :browser
+
+    def initialize(width: nil, height: nil, timeout: nil, debug: false)
+      @width = width || SeleniumDiff::DEFAULT_OPTIONS[:width]
+      @height = height || SeleniumDiff::DEFAULT_OPTIONS[:height]
+      @timeout = timeout || SeleniumDiff::DEFAULT_OPTIONS[:timeout]
+      @debug = debug
+      options = {
+        window_size: [@width, @height],
+        timeout: @timeout,
+        browser_options: {
+          "device-scale-factor" => 1,
+          "force-device-scale-factor" => nil,
+        },
+      }
+      if @debug
+        options[:logger] = STDOUT
+        options[:headless] = false
+      end
+
+      @browser = Ferrum::Browser.new(options)
+      @browser.resize(width: @width, height: @height)
     end
 
-    def run(from_url:, to_url:, output:, fuzz: SeleniumDiff::DEFAULT_OPTIONS[:fuzz])
+    def run(from_url:, to_url:, output:, fuzz: nil)
+      fuzz ||= SeleniumDiff::DEFAULT_OPTIONS[:fuzz]
       result = nil
       Dir.mktmpdir do |tmpdir|
         from_file = File.join(tmpdir, "from.png")
@@ -58,15 +68,19 @@ module SeleniumDiff
     end
 
     def screenshot(url, file)
-        @driver.navigate.to(url)
-        wait_complete
-        @driver.manage.window.resize_to(@width, @height)
-        @driver.save_screenshot(file)
+      @browser.network.wait_for_idle
+      @browser.goto(url)
+      wait_complete
+      @browser.resize(width: @width, height: @height)
+      @browser.screenshot(path: file)
     end
 
     def wait_complete
-      Selenium::WebDriver::Wait.new.until do
-        @driver.execute_script('return document.readyState') == "complete"
+      @browser.network.wait_for_idle
+      Timeout.timeout(@timeout) do
+        until @browser.page.evaluate('document.readyState') == "complete"
+          sleep 0.1
+        end
       end
     end
   end
