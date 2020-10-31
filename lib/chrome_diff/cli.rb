@@ -27,7 +27,7 @@ module ChromeDiff
       parser.on("-w [WIDTH]", "--width", "Window width (default 800)") {|v| opts[:width] = v.to_i }
       parser.on("-h [HEIGHT]", "--height", "Window height (default 600)") {|v| opts[:height] = v.to_i }
       parser.on("-q", "--quiet", "Quiet mode") {|v| opts[:quiet] = v }
-      parser.on("--fuzz [FUZZ]", "Fuzz factor percent (default 5%)") {|v| opts[:fuzz] = v.to_i }
+      parser.on("--fuzz [FUZZ]", "Fuzz factor percent (default 5%)") {|v| opts[:fuzz] = v.to_f }
       parser.on("--debug", "Debug mode (default false)") {|v| opts[:debug] = !!v }
       parser.parse(argv)
 
