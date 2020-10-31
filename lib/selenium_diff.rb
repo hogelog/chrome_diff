@@ -9,7 +9,7 @@ module SeleniumDiff
     output: "diff.png",
     width: 800,
     height: 600,
-    fuzz: 5,
+    fuzz: 1,
     timeout: 5,
   }
 
