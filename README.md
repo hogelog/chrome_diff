@@ -1,4 +1,5 @@
 # ChromeDiff
+[![Gem Version](https://badge.fury.io/rb/chrome_diff.svg)](https://badge.fury.io/rb/chrome_diff)
 
 Visual diff tool powered by headless chrome.
 
