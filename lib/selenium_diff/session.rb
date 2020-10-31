@@ -5,22 +5,23 @@ require "open3"
 
 module SeleniumDiff
   class CompareStatus
-    attr_reader :status, :difference, :difference_percent
+    attr_reader :status, :diff, :diff_percent
 
-    def initialize(status, stderr, width, height)
+    def initialize(status, stderr, width, height, fuzz)
       @status = status
+      @fuzz = fuzz
 
-      @difference = stderr.to_i
-      @difference_percent = @difference.to_f / width / height * 100
+      @diff = stderr.to_i
+      @diff_percent = @diff.to_f / width / height * 100
     end
 
     def success?
-      @status == 0
+      @diff_percent <= @fuzz
     end
   end
 
   class Session
-    def initialize(width: 800, height: 600)
+    def initialize(width: SeleniumDiff::DEFAULT_OPTIONS[:width], height: SeleniumDiff::DEFAULT_OPTIONS[:height])
       @width = width
       @height = height
       driver_options = Selenium::WebDriver::Chrome::Options.new(args: [
@@ -37,7 +38,7 @@ module SeleniumDiff
       @driver = Selenium::WebDriver::Chrome::Driver.new(options: driver_options)
     end
 
-    def run(from_url:, to_url:, output:)
+    def run(from_url:, to_url:, output:, fuzz: SeleniumDiff::DEFAULT_OPTIONS[:fuzz])
       result = nil
       Dir.mktmpdir do |tmpdir|
         from_file = File.join(tmpdir, "from.png")
@@ -48,7 +49,8 @@ module SeleniumDiff
         screenshot(to_url, to_file)
 
         _stdout, stderr, status =  Open3.capture3("compare", "-metric", "AE", from_file, to_file, diff_file)
-        result = CompareStatus.new(status, stderr, @width, @height)
+        result = CompareStatus.new(status, stderr, @width, @height, fuzz)
+
         File.rename(diff_file, output)
       end
 

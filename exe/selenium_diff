@@ -3,4 +3,6 @@
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require "selenium_diff"
 
-SeleniumDiff::CLI.run(ARGV)
+result = SeleniumDiff::CLI.run(ARGV)
+
+exit(result.success? ? 0 : 1)

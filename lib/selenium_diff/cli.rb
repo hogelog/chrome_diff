@@ -3,21 +3,19 @@ require "optparse"
 module SeleniumDiff
   class CLI
     def self.run(argv)
-      opts = parse_argv(argv.dup)
-
-      from = opts[:from_url]
-      to = opts[:to_url]
+      opts = SeleniumDiff::DEFAULT_OPTIONS.merge(parse_argv(argv.dup))
+      result = SeleniumDiff.run(**opts)
       output = opts[:output]
 
-      status = SeleniumDiff.run(from_url: from, to_url: to, output: output)
-
       unless opts[:quiet]
-        if status.success?
-          puts "No differences found: #{from} -> #{to} (#{output})"
+        if result.success?
+          puts "There is no difference (%.2f%%): #{output}" % result.diff_percent
         else
-          puts "There are some differences: #{from} -> #{to} (#{output})"
+          puts "There are some diffefences (%.2f%%): #{output}" % result.diff_percent
         end
       end
+
+      result
     end
 
     def self.parse_argv(argv)
@@ -26,12 +24,14 @@ module SeleniumDiff
       parser.on("-f [FROM_URL]", "--from-url", "From url") {|v| opts[:from_url] = v }
       parser.on("-t [TO_URL]", "--to-url", "To url") {|v| opts[:to_url] = v }
       parser.on("-o [OUTPUT]", "--output", "Output file") {|v| opts[:output] = v }
+      parser.on("-w [WIDTH]", "--width", "Window width (default 800)") {|v| opts[:width] = v.to_i }
+      parser.on("-h [HEIGHT]", "--height", "Window height (default 600)") {|v| opts[:height] = v.to_i }
+      parser.on("--fuzz [FUZZ]", "Fuzz factor percent (default 5%)") {|v| opts[:fuzz] = v.to_i }
       parser.on("-q", "--quiet", "Quiet mode") {|v| opts[:quiet] = v }
       parser.parse(argv)
 
       required(opts, :from_url)
       required(opts, :to_url)
-      opts[:output] ||= "diff.png"
 
       opts
     rescue ArgumentError => e
