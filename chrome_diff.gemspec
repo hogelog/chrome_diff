@@ -1,16 +1,16 @@
 
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "selenium_diff/version"
+require "chrome_diff/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "selenium_diff"
-  spec.version       = SeleniumDiff::VERSION
+  spec.name          = "chrome_diff"
+  spec.version       = ChromeDiff::VERSION
   spec.authors       = ["hogelog"]
   spec.email         = ["konbu.komuro@gmail.com"]
 
-  spec.summary       = %q{Generate visual diff by selenium.}
-  spec.homepage      = "https://github.com/hogelog/selenium_diff"
+  spec.summary       = %q{Generate visual diff by chrome.}
+  spec.homepage      = "https://github.com/hogelog/chrome_diff"
   spec.license       = "MIT"
 
   # Specify which files should be added to the gem when it is released.

@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
-require "selenium_diff"
+require "chrome_diff"
 
-result = SeleniumDiff::CLI.run(ARGV)
+result = ChromeDiff::CLI.run(ARGV)
 
 exit(result.success? ? 0 : 1)

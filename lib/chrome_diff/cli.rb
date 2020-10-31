@@ -1,10 +1,10 @@
 require "optparse"
 
-module SeleniumDiff
+module ChromeDiff
   class CLI
     def self.run(argv)
-      opts = SeleniumDiff::DEFAULT_OPTIONS.merge(parse_argv(argv.dup))
-      result = SeleniumDiff.run(**opts)
+      opts = ChromeDiff::DEFAULT_OPTIONS.merge(parse_argv(argv.dup))
+      result = ChromeDiff.run(**opts)
       output = opts[:output]
 
       unless opts[:quiet]

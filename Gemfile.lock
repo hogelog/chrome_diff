@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    selenium_diff (0.1.0)
+    chrome_diff (0.1.0)
       ferrum (< 1.0)
 
 GEM
@@ -41,9 +41,9 @@ PLATFORMS
 
 DEPENDENCIES
   bundler
+  chrome_diff!
   rake
   rspec (< 4.0)
-  selenium_diff!
 
 BUNDLED WITH
    1.17.1

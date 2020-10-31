@@ -5,7 +5,7 @@ require "tmpdir"
 require "open3"
 require "logger"
 
-module SeleniumDiff
+module ChromeDiff
   class CompareStatus
     attr_reader :status, :diff, :diff_percent
 
@@ -26,9 +26,9 @@ module SeleniumDiff
     attr_reader :browser
 
     def initialize(width: nil, height: nil, timeout: nil, debug: false)
-      @width = width || SeleniumDiff::DEFAULT_OPTIONS[:width]
-      @height = height || SeleniumDiff::DEFAULT_OPTIONS[:height]
-      @timeout = timeout || SeleniumDiff::DEFAULT_OPTIONS[:timeout]
+      @width = width || ChromeDiff::DEFAULT_OPTIONS[:width]
+      @height = height || ChromeDiff::DEFAULT_OPTIONS[:height]
+      @timeout = timeout || ChromeDiff::DEFAULT_OPTIONS[:timeout]
       @debug = debug
       options = {
         window_size: [@width, @height],
@@ -48,7 +48,7 @@ module SeleniumDiff
     end
 
     def run(from_url:, to_url:, output:, fuzz: nil)
-      fuzz ||= SeleniumDiff::DEFAULT_OPTIONS[:fuzz]
+      fuzz ||= ChromeDiff::DEFAULT_OPTIONS[:fuzz]
       result = nil
       Dir.mktmpdir do |tmpdir|
         from_file = File.join(tmpdir, "from.png")

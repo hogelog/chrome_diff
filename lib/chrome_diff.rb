@@ -1,8 +1,8 @@
-require "selenium_diff/version"
-require "selenium_diff/cli"
-require "selenium_diff/session"
+require "chrome_diff/version"
+require "chrome_diff/cli"
+require "chrome_diff/session"
 
-module SeleniumDiff
+module ChromeDiff
   class Error < StandardError; end
 
   DEFAULT_OPTIONS = {
@@ -20,7 +20,7 @@ module SeleniumDiff
     debug = args.delete(:debug)
 
     begin
-      session = SeleniumDiff::Session.new(width: width, height: height, timeout: timeout, debug: debug)
+      session = ChromeDiff::Session.new(width: width, height: height, timeout: timeout, debug: debug)
       session.run(**args)
     ensure
       session.browser&.quit

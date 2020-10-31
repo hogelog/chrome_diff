@@ -1,29 +1,27 @@
-# SeleniumDiff
+# ChromeDiff
 
-Visual diff tool powered by selenium and headless chrome.
+Visual diff tool powered by headless chrome.
 
 ## Installation
 
 ```console
-$ gem install selenium_diff
+$ gem install chrome_diff
 ```
 
 ## Requirements
 - Google Chrome (or Chromium)
-- ChromeDriver
 - ImageMagick
 
 ## Usage
 
 ```console
-$ selenium_diff -f "https://google.com/?q=hello" -t "https://google.com/?q=world"
-Visual diff generated: diff.png
-There are some differences: https://google.com/?q=hello -> https://google.com/?q=world
+$ chrome_diff -f "https://google.com/?q=hello" -t "https://google.com/?q=world"
+There are some diffefences (1.44%): diff.png
 ```
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/hogelog/selenium_diff.
+Bug reports and pull requests are welcome on GitHub at https://github.com/hogelog/chrome_diff.
 
 ## License
 

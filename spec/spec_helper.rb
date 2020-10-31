@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "selenium_diff"
+require "chrome_diff"
 
 module Helpers
   def root_path
