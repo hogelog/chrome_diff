@@ -46,7 +46,7 @@ session = ChromeDiff::Session.new
 session.compare("https://example.com/", "https://www.google.com/")
 ```
 
-### Customize
+#### Customize
 
 ```ruby
 session = ChromeDiff::Session.new(width: 800, height: 600, timeout: 5, debug: false)
