@@ -9,16 +9,16 @@ module ChromeDiff
   class CompareStatus
     attr_reader :status, :diff, :diff_percent
 
-    def initialize(status, stderr, width, height, fuzz)
+    def initialize(status, stderr, width, height, threshold)
       @status = status
-      @fuzz = fuzz
+      @threshold = threshold
 
       @diff = stderr.to_f.to_i
       @diff_percent = @diff.to_f / width / height * 100
     end
 
     def success?
-      @diff_percent <= @fuzz
+      @diff_percent <= @threshold
     end
   end
 
@@ -47,8 +47,8 @@ module ChromeDiff
       @browser.resize(width: @width, height: @height)
     end
 
-    def compare(from_url:, to_url:, output:, fuzz: nil, full_screenshot: nil)
-      fuzz ||= ChromeDiff::DEFAULT_OPTIONS[:fuzz]
+    def compare(from_url:, to_url:, output:, threshold: nil, full_screenshot: nil)
+      threshold ||= ChromeDiff::DEFAULT_OPTIONS[:threshold]
       result = nil
       Dir.mktmpdir do |tmpdir|
         from_file = File.join(tmpdir, "from.png")
@@ -59,7 +59,7 @@ module ChromeDiff
         screenshot(to_url, to_file, full_screenshot)
 
         _stdout, stderr, status =  Open3.capture3("compare", "-metric", "AE", from_file, to_file, diff_file)
-        result = CompareStatus.new(status, stderr, @width, @height, fuzz)
+        result = CompareStatus.new(status, stderr, @width, @height, threshold)
 
         File.rename(diff_file, output) if output
       end

@@ -10,7 +10,7 @@ module ChromeDiff
     output: "diff.png",
     width: 800,
     height: 600,
-    fuzz: 1,
+    threshold: 1,
     timeout: 5,
   }
 
